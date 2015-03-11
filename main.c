@@ -26,11 +26,11 @@ void removeComments(char *str)
 		switch (cur)
 		{
 		case '"':				//to avoid comment patterns inside string literals
-			if (state == TEXT && prev != '\'')
+			if (state == TEXT && prev != '\'' && prev != '\\')
 			{
 				state = S_LITERAL;
 			}
-			else if (state == S_LITERAL && prev != '\\')
+			else if (state == S_LITERAL && prev != '\\' && prev != '\'')
 			{
 				state = TEXT;
 			}
@@ -90,7 +90,7 @@ void removeCommentsFromThisFile()
 	char c;
 	int i;
 
-	FILE * pFile = fopen("main.c", "r");
+	FILE * pFile = fopen("Task.c", "r");
 	for (i = 0; (c = getc(pFile)) != EOF; ++i)
 	{
 		str[i] = c;
@@ -100,7 +100,7 @@ void removeCommentsFromThisFile()
 
 	removeComments(str);
 
-	pFile = fopen("mainNoComments.c", "w");
+	pFile = fopen("TaskNoComments.c", "w");
 	fprintf(pFile, "%s", str);
 	fclose(pFile);
 }
@@ -126,7 +126,7 @@ void test()
 	char testString4[] = "abc//def\nghi";
 	removeComments(testString4);
 	assert(!strcmp(testString4, "abc\nghi"));
-
+	
 	char testString5[] = " \" inside /* a string literal */ it is not //a comment \" ";
 	removeComments(testString5);
 	assert(!strcmp(testString5, " \" inside /* a string literal */ it is not //a comment \" "));
